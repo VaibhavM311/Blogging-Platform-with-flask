@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row align-items-center gap-4 pb-4 border-bottom">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center display-4" style="width: 96px; height: 96px;">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="text-center text-md-start">
+                        <h2 class="fw-bold mb-1">{{ user.username }}</h2>
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-envelope me-1"></i> {{ user.email }}
+                        </p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                <i class="bi bi-shield-check me-1"></i> Active Session
+                            </span>
+                            <span class="badge bg-light text-muted border px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i> Joined: {{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'Recently' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ms-md-auto">
+                        <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h5 class="fw-bold mb-3">About Me</h5>
+                    {% if user.bio %}
+                        <p class="lead text-secondary fs-6">{{ user.bio }}</p>
+                    {% else %}
+                        <p class="text-muted fst-italic">No bio provided yet. Click "Edit Profile" to tell the community about yourself!</p>
+                    {% endif %}
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Home
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

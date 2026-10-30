@@ -48,7 +48,6 @@ class AuthTestCase(unittest.TestCase):
         self.assertIn(b'You have been logged out.', response.data)
 
     def test_duplicate_user_registration(self):
-        # Create initial user
         user = User(username='existing', email='existing@example.com')
         user.set_password('pass123')
         db.session.add(user)
@@ -71,6 +70,48 @@ class AuthTestCase(unittest.TestCase):
             'confirm_password': 'pass123'
         })
         self.assertIn(b'An account with this email already exists', response.data)
+
+    def test_protected_routes_require_login(self):
+        """Verify unauthenticated requests to protected routes redirect to login."""
+        response = self.client.get('/auth/profile', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        # Verify redirected to login page and flash message shown
+        self.assertIn(b'Please log in to access this page.', response.data)
+        self.assertIn(b'Sign In', response.data)
+
+    def test_profile_and_edit_profile(self):
+        """Verify authenticated session access to profile and editing details."""
+        # 1. Create and login user
+        user = User(username='clara', email='clara@example.com', bio='Original bio')
+        user.set_password('pass123')
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/auth/login', data={'email': 'clara@example.com', 'password': 'pass123'}, follow_redirects=True)
+
+        # 2. View profile
+        resp = self.client.get('/auth/profile')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'clara', resp.data)
+        self.assertIn(b'Original bio', resp.data)
+        self.assertIn(b'Active Session', resp.data)
+
+        # 3. Edit profile
+        edit_resp = self.client.post('/auth/edit-profile', data={
+            'username': 'clara_updated',
+            'email': 'clara_new@example.com',
+            'bio': 'Updated professional author bio.'
+        }, follow_redirects=True)
+        self.assertEqual(edit_resp.status_code, 200)
+        self.assertIn(b'Your profile has been updated successfully!', edit_resp.data)
+        self.assertIn(b'clara_updated', edit_resp.data)
+        self.assertIn(b'Updated professional author bio.', edit_resp.data)
+
+        # 4. Check database directly
+        updated_user = db.session.get(User, user.id)
+        self.assertEqual(updated_user.username, 'clara_updated')
+        self.assertEqual(updated_user.email, 'clara_new@example.com')
+        self.assertEqual(updated_user.bio, 'Updated professional author bio.')
 
 if __name__ == '__main__':
     unittest.main()
