@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "macros.html" import post_card, render_pagination with context %}
+
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-lg-9">
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-search text-primary fs-3 me-3"></i>
+            <div>
+                <h3 class="fw-bold mb-0">Search Results</h3>
+                {% if q %}
+                    <p class="text-muted small mb-0">
+                        {{ pagination.total if pagination else 0 }} result(s) for
+                        <strong>"{{ q }}"</strong>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <form action="{{ url_for('main.search') }}" method="GET" class="mb-4">
+            <div class="input-group">
+                <input class="form-control" type="text" name="q"
+                       placeholder="Search posts by title or content..."
+                       value="{{ q or '' }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search me-1"></i> Search
+                </button>
+            </div>
+        </form>
+
+        {% if q %}
+            {% if pagination and pagination.items %}
+                {% for post in pagination.items %}
+                    {{ post_card(post) }}
+                {% endfor %}
+                {{ render_pagination(pagination, 'main.search', 'q=' ~ q) }}
+            {% else %}
+                <div class="card text-center p-5">
+                    <div class="text-muted display-4 mb-3"><i class="bi bi-search"></i></div>
+                    <h5 class="fw-bold">No results found for "{{ q }}"</h5>
+                    <p class="text-muted">Try different keywords or browse all articles.</p>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary align-self-center">
+                        Browse All Articles
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="card text-center p-5 text-muted">
+                <i class="bi bi-search display-4 mb-3"></i>
+                <p>Enter a keyword above to search posts.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

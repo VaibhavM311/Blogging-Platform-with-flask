@@ -1,13 +1,13 @@
 {% extends "base.html" %}
+{% from "macros.html" import post_card, render_pagination with context %}
 
 {% block content %}
+<!-- Hero Banner -->
 <div class="p-4 p-md-5 mb-4 bg-white rounded-3 shadow-sm border">
     <div class="row align-items-center">
         <div class="col-lg-8">
             <h1 class="display-6 fw-bold text-dark mb-2">Welcome to DevBlog</h1>
-            <p class="fs-5 text-muted mb-3">
-                A clean, modern space for software developers to publish insights, tutorials, and technical stories.
-            </p>
+            <p class="fs-5 text-muted mb-3">A clean, modern space for developers to publish insights, tutorials and stories.</p>
             {% if current_user.is_authenticated %}
                 <a class="btn btn-primary btn-lg" href="{{ url_for('posts.create_post') }}">
                     <i class="bi bi-pencil-square me-1"></i> Write a Post
@@ -17,99 +17,67 @@
                     <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">
                         <i class="bi bi-rocket-takeoff me-1"></i> Get Started
                     </a>
-                    <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('auth.login') }}">
-                        Sign In
-                    </a>
+                    <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('auth.login') }}">Sign In</a>
                 </div>
             {% endif %}
         </div>
         <div class="col-lg-4 d-none d-lg-block text-center">
-            <i class="bi bi-journal-richtext text-primary" style="font-size: 7rem;"></i>
+            <i class="bi bi-journal-richtext text-primary" style="font-size:6rem;"></i>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Posts Feed Column -->
+    <!-- Posts Feed -->
     <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold mb-0">Recent Articles</h3>
-            <span class="badge bg-secondary">{{ posts|length }} {{ 'article' if posts|length == 1 else 'articles' }}</span>
+            <h4 class="fw-bold mb-0">Recent Articles</h4>
+            <span class="badge bg-secondary rounded-pill">{{ pagination.total }} total</span>
         </div>
 
-        {% if posts %}
-            {% for post in posts %}
-                <article class="card post-card mb-3">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="rounded-circle bg-primary-subtle text-primary fw-bold d-inline-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                {{ post.author.username[0]|upper }}
-                            </span>
-                            <a href="{{ url_for('posts.user_posts', username=post.author.username) }}" class="text-decoration-none fw-semibold text-dark">
-                                {{ post.author.username }}
-                            </a>
-                            <span class="text-muted mx-2">&bull;</span>
-                            <span class="text-muted small">
-                                <i class="bi bi-calendar3 me-1"></i>{{ post.created_at.strftime('%b %d, %Y') }}
-                            </span>
-                        </div>
-
-                        <h4 class="card-title fw-bold">
-                            <a href="{{ url_for('posts.post_detail', post_id=post.id) }}" class="text-dark text-decoration-none hover-primary">
-                                {{ post.title }}
-                            </a>
-                        </h4>
-
-                        <p class="card-text text-secondary mt-2">
-                            {{ post.snippet }}
-                        </p>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                            <a href="{{ url_for('posts.post_detail', post_id=post.id) }}" class="btn btn-sm btn-outline-primary">
-                                Read Full Article <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                            {% if current_user == post.author %}
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{{ url_for('posts.edit_post', post_id=post.id) }}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </article>
+        {% if pagination.items %}
+            {% for post in pagination.items %}
+                {{ post_card(post) }}
             {% endfor %}
+            {{ render_pagination(pagination, 'main.index') }}
         {% else %}
             <div class="card text-center p-5">
                 <div class="text-muted display-4 mb-3"><i class="bi bi-journal-x"></i></div>
-                <h4 class="fw-bold">No articles published yet</h4>
-                <p class="text-muted">Be the first to share knowledge with the developer community!</p>
+                <h5 class="fw-bold">No articles published yet</h5>
+                <p class="text-muted">Be the first to share knowledge with the community!</p>
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary align-self-center">
-                        <i class="bi bi-plus-circle me-1"></i> Create the First Post
+                        <i class="bi bi-plus-circle me-1"></i> Write the First Post
                     </a>
                 {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary align-self-center">
-                        Sign in to write an article
-                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary align-self-center">Sign up to write</a>
                 {% endif %}
             </div>
         {% endif %}
     </div>
 
-    <!-- Sidebar Column -->
+    <!-- Sidebar -->
     <div class="col-lg-4">
-        <div class="card p-3 mb-4">
-            <h5 class="fw-bold border-bottom pb-2 mb-3">About This Platform</h5>
-            <p class="small text-muted mb-2">
-                DevBlog is a full-featured modular web application built with:
-            </p>
-            <ul class="list-unstyled small mb-3">
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-search me-1"></i> Search</h6>
+            <form action="{{ url_for('main.search') }}" method="GET">
+                <div class="input-group">
+                    <input class="form-control form-control-sm" type="text" name="q"
+                           placeholder="Search articles..." value="{{ request.args.get('q','') }}">
+                    <button class="btn btn-outline-primary btn-sm" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="card p-3">
+            <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-check-circle-fill text-success me-1"></i> Built With</h6>
+            <ul class="list-unstyled small mb-0">
                 <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flask Application Factory</li>
-                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flask-SQLAlchemy Relational ORM</li>
-                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flask-Login Authentication</li>
+                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flask-SQLAlchemy ORM</li>
+                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flask-Login Sessions</li>
                 <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> CSRF-Protected WTForms</li>
-                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Bootstrap 5 Responsive Design</li>
+                <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Bootstrap 5 Responsive UI</li>
             </ul>
         </div>
     </div>
