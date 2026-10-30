@@ -14,21 +14,29 @@ Blogging_Platform/
 │   ├── __init__.py           # Application Factory (create_app) & extensions
 │   ├── models/               # SQLAlchemy ORM Models
 │   │   ├── __init__.py
-│   │   └── user.py           # User model, UserMixin & password hashing
+│   │   ├── user.py           # User model, UserMixin & password hashing
+│   │   └── post.py           # Post model, relational foreign keys & snippet property
 │   ├── auth/                 # Authentication & Session Blueprint
 │   │   ├── forms.py          # Registration, Login & Edit Profile WTForms
 │   │   └── routes.py         # Login, Register, Logout, Profile routes
-│   ├── main/                 # Main Blueprint (Index, About)
+│   ├── posts/                # Blog Post CRUD Blueprint
+│   │   ├── forms.py          # PostForm with validation
+│   │   └── routes.py         # Create, read, edit, delete & user post routes
+│   ├── main/                 # Main Blueprint (Index Feed, About)
 │   │   └── routes.py
 │   ├── errors/               # Custom Error Handlers (404, 403, 500)
 │   │   └── handlers.py
 │   └── templates/            # Jinja2 Templates (Bootstrap 5)
 │       ├── auth/             # login.html, register.html, profile.html, edit_profile.html
-│       ├── errors/           # 404.html, 500.html
+│       ├── posts/            # create_post.html, edit_post.html, post_detail.html, user_posts.html
+│       ├── errors/           # 404.html, 403.html, 500.html
 │       ├── main/             # index.html, about.html
 │       └── base.html         # Master responsive layout & navbar
 ├── migrations/               # Alembic database migrations
-├── tests/                    # Automated Unit Tests
+├── tests/                    # Automated Unit Tests (18 test cases)
+│   ├── test_basics.py
+│   ├── test_auth.py
+│   └── test_posts.py
 ├── instance/                 # SQLite database storage (blog.db)
 ├── config.py                 # Multi-environment configurations
 ├── run.py                    # Entry-point runner
@@ -63,6 +71,22 @@ Blogging_Platform/
 - **Automated Tests (`tests/test_auth.py`)**:
   - 100% test coverage for password hashing, registration, login/logout, route protection, and profile updates.
 
+### Week 3: Post Management (CRUD), Author Relationships & Permissions
+- **Post Model (`app/models/post.py`)**:
+  - Relational mapping with `User` (`One-to-Many` via `author_id` foreign key and cascade deletion).
+  - Content snippet helper property for feed previews.
+  - Automated timestamps for creation and `updated_at` modification tracking.
+- **Post Blueprint & CRUD Routes (`app/posts/routes.py`)**:
+  - `GET /posts/create` & `POST /posts/create`: Protected post authoring with WTForms validation.
+  - `GET /posts/<int:post_id>`: Dedicated article reading view.
+  - `GET /posts/<int:post_id>/edit` & `POST /posts/<int:post_id>/edit`: Secure editing with strict author verification (`403 Forbidden` for non-authors).
+  - `POST /posts/<int:post_id>/delete`: Secure deletion with Bootstrap confirmation modal.
+  - `GET /posts/user/<string:username>`: Author portfolio page displaying all articles by a specific user.
+- **Dynamic Homepage Feed**:
+  - Real-time display of recent articles ordered newest-first with author badges, publication dates, and snippets.
+- **Automated Tests (`tests/test_posts.py`)**:
+  - Complete test coverage for post creation, reading, editing, deletion, unauthorized 403 blocks, 404 handling, and user filters.
+
 ---
 
 ## 🚀 Getting Started
@@ -87,3 +111,4 @@ Visit `http://127.0.0.1:5000` in your web browser.
 ```powershell
 python -m unittest discover tests
 ```
+*(All 18 tests passing with 100% success rate!)*

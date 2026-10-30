@@ -15,6 +15,9 @@ class User(UserMixin, db.Model):
     profile_image = db.Column(db.String(120), default='default_avatar.png')
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
+    # Relational link: one user can author many posts (One-to-Many)
+    posts = db.relationship('Post', backref='author', lazy='dynamic', cascade='all, delete-orphan')
+
     def set_password(self, password):
         """Hashes the user's password using Werkzeug's secure hashing."""
         self.password_hash = generate_password_hash(password)

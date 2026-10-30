@@ -31,10 +31,12 @@ def create_app(config_name='default'):
     # Register Blueprints
     from app.main.routes import main_bp
     from app.auth.routes import auth_bp
+    from app.posts.routes import posts_bp
     from app.errors.handlers import errors_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(posts_bp)
     app.register_blueprint(errors_bp)
 
     # Import models to ensure user_loader and database schemas are registered

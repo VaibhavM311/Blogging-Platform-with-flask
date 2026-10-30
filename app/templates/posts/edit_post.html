@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-lg-9">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                    <i class="bi bi-pencil text-primary fs-2 me-3"></i>
+                    <div>
+                        <h3 class="fw-bold mb-0">Edit Article</h3>
+                        <p class="text-muted small mb-0">Update your article content or title</p>
+                    </div>
+                </div>
+
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-4">
+                        {{ form.title.label(class="form-label fw-bold") }}
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.content.label(class="form-label fw-bold") }}
+                        {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid", rows=12) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control", rows=12) }}
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{{ url_for('posts.post_detail', post_id=post.id) }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                        <input type="submit" value="Save Changes" class="btn btn-primary px-4">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
