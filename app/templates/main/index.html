@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm border">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold text-dark">Welcome to DevBlog</h1>
+        <p class="col-md-8 fs-5 text-muted">
+            A production-ready blogging platform built with Python, Flask, and SQLAlchemy.
+            Explore articles, write your own posts, share insights, and interact with the developer community.
+        </p>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('main.about') }}" role="button">
+                <i class="bi bi-compass me-1"></i> Learn More
+            </a>
+            <a class="btn btn-outline-secondary btn-lg" href="#features" role="button">
+                Explore Architecture
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2" id="features">
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="card-body">
+                <div class="text-primary fs-2 mb-2"><i class="bi bi-shield-lock"></i></div>
+                <h5 class="card-title fw-bold">Secure Authentication</h5>
+                <p class="card-text text-muted">
+                    Session-based auth using Flask-Login and Werkzeug password hashing. Safe, persistent, and role-aware.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="card-body">
+                <div class="text-success fs-2 mb-2"><i class="bi bi-pencil-square"></i></div>
+                <h5 class="card-title fw-bold">Rich Post Publishing</h5>
+                <p class="card-text text-muted">
+                    Full CRUD support with author-specific permissions, tags, drafts, and clean slug/URL generation.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <div class="card-body">
+                <div class="text-info fs-2 mb-2"><i class="bi bi-chat-dots"></i></div>
+                <h5 class="card-title fw-bold">Community &amp; Search</h5>
+                <p class="card-text text-muted">
+                    Comment sections, keyword search, categorized feeds, and author profile portfolios.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

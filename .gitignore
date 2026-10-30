@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.local
+
+# Database
+*.sqlite3
+*.db
+instance/
+
+# Flask session / cache
+.webassets-cache
+.pytest_cache/
+
+# IDE files
+.vscode/
+.idea/
