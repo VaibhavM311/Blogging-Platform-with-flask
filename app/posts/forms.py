@@ -12,4 +12,6 @@ class PostForm(FlaskForm):
         DataRequired(message='Post content cannot be empty.'),
         Length(min=10, message='Content must be at least 10 characters long.')
     ])
+    category = StringField('Category', validators=[Length(max=60)])
+    tags = StringField('Tags (comma-separated)', validators=[Length(max=250)])
     submit = SubmitField('Publish Post')
