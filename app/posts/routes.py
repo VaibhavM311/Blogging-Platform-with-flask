@@ -70,7 +70,10 @@ def delete_post(post_id):
 
 @posts_bp.route('/user/<string:username>')
 def user_posts(username):
-    """Display all posts written by a specific user."""
+    """Display all posts written by a specific user (paginated)."""
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user).order_by(Post.created_at.desc()).all()
-    return render_template('posts/user_posts.html', title=f"Posts by {user.username}", user=user, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.filter_by(author=user).order_by(Post.created_at.desc()).paginate(
+        page=page, per_page=5, error_out=False
+    )
+    return render_template('posts/user_posts.html', title=f"Posts by {user.username}", user=user, pagination=pagination)
